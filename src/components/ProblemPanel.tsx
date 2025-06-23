@@ -16,37 +16,37 @@ import {
 } from "lucide-react";
 
 interface ProblemPanelProps {
-  isInterviewer: boolean;
+  isTeacher: boolean;
 }
 
-const ProblemPanel = ({ isInterviewer }: ProblemPanelProps) => {
+const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
   const [selectedProblem, setSelectedProblem] = useState(0);
   
   const problems = [
     {
       id: 1,
-      title: "Two Sum",
+      title: "Remove Duplicates",
       difficulty: "Easy",
       category: "Array",
       timeLimit: 30,
-      description: "주어진 정수 배열에서 두 수의 합이 목표값과 같은 인덱스 쌍을 반환하세요.",
+      description: "주어진 정수 배열에서 중복된 요소를 제거하는 함수를 작성하세요.",
       examples: [
         {
-          input: "nums = [2,7,11,15], target = 9",
-          output: "[0,1]",
-          explanation: "nums[0] + nums[1] = 2 + 7 = 9이므로 [0, 1]을 반환합니다."
+          input: "arr = [1,2,2,3,4,4,5]",
+          output: "[1,2,3,4,5]",
+          explanation: "중복된 요소들을 제거하고 고유한 값들만 반환합니다."
         }
       ],
       constraints: [
-        "2 ≤ nums.length ≤ 10⁴",
-        "-10⁹ ≤ nums[i] ≤ 10⁹",
-        "정확히 하나의 해답이 존재합니다"
+        "1 ≤ arr.length ≤ 10⁴",
+        "-10³ ≤ arr[i] ≤ 10³",
+        "순서는 유지되어야 합니다"
       ]
     },
     {
       id: 2,
       title: "Valid Parentheses",
-      difficulty: "Easy",
+      difficulty: "Easy", 
       category: "Stack",
       timeLimit: 25,
       description: "괄호로 이루어진 문자열이 올바른지 판단하는 함수를 작성하세요.",
@@ -94,11 +94,11 @@ const ProblemPanel = ({ isInterviewer }: ProblemPanelProps) => {
         <div className="flex-1 overflow-auto">
           <TabsContent value="problem" className="m-0 h-full">
             <div className="p-4 space-y-4">
-              {/* Problem Selector (Interviewer Only) */}
-              {isInterviewer && (
+              {/* Problem Selector (Teacher Only) */}
+              {isTeacher && (
                 <Card className="bg-slate-700 border-slate-600">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-white text-sm">문제 선택</CardTitle>
+                    <CardTitle className="text-white text-sm">수업 문제 선택</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
                     {problems.map((problem, index) => (
