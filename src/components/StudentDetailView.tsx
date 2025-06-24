@@ -26,7 +26,7 @@ interface Student {
   name: string;
   isOnline: boolean;
   progress: number;
-  codeQuality: number;
+  codeQuality?: number;
 }
 
 interface StudentDetailViewProps {
@@ -180,13 +180,15 @@ const StudentDetailView = ({ student, onBack }: StudentDetailViewProps) => {
                       <Progress value={student.progress} className="h-2 bg-slate-600" />
                     </div>
 
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-slate-300">코드 품질</span>
-                        <span className="text-white font-semibold">{student.codeQuality}/100</span>
+                    {student.codeQuality && (
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-slate-300">코드 품질</span>
+                          <span className="text-white font-semibold">{student.codeQuality}/100</span>
+                        </div>
+                        <Progress value={student.codeQuality} className="h-2 bg-slate-600" />
                       </div>
-                      <Progress value={student.codeQuality} className="h-2 bg-slate-600" />
-                    </div>
+                    )}
 
                     <div className="grid grid-cols-2 gap-3 text-xs mt-3">
                       <div className="text-center">

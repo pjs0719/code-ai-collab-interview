@@ -26,60 +26,18 @@ interface Student {
 }
 
 interface StudentGridViewProps {
-  onSelectStudent: (student: Student) => void;
+  students: Student[];
+  onSelectStudent: (studentId: number) => void;
 }
 
-const StudentGridView = ({ onSelectStudent }: StudentGridViewProps) => {
-  const [students] = useState<Student[]>([
-    {
-      id: 1,
-      name: "김민수",
-      isOnline: true,
-      progress: 75,
-      timeComplexity: "O(n²)",
-      spaceComplexity: "O(n)",
-      testsCompleted: 3,
-      totalTests: 5,
-    },
-    {
-      id: 2,
-      name: "이지은",
-      isOnline: true,
-      progress: 90,
-      timeComplexity: "O(n log n)",
-      spaceComplexity: "O(1)",
-      testsCompleted: 4,
-      totalTests: 5,
-    },
-    {
-      id: 3,
-      name: "박준호",
-      isOnline: false,
-      progress: 45,
-      timeComplexity: "O(n³)",
-      spaceComplexity: "O(n²)",
-      testsCompleted: 2,
-      totalTests: 5,
-    },
-    {
-      id: 4,
-      name: "최유진",
-      isOnline: true,
-      progress: 60,
-      timeComplexity: "O(n)",
-      spaceComplexity: "O(n)",
-      testsCompleted: 3,
-      totalTests: 5,
-    },
-  ]);
-
+const StudentGridView = ({ students, onSelectStudent }: StudentGridViewProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
       {students.map((student) => (
         <Card 
           key={student.id} 
           className="bg-slate-800 border-slate-700 hover:bg-slate-750 transition-colors cursor-pointer"
-          onClick={() => onSelectStudent(student)}
+          onClick={() => onSelectStudent(student.id)}
         >
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-3">
