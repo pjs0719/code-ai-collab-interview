@@ -16,9 +16,10 @@ import {
 
 interface LoginPageProps {
   onLogin: (role: 'teacher' | 'student') => void;
+  onSwitchToSignup?: () => void;
 }
 
-const LoginPage = ({ onLogin }: LoginPageProps) => {
+const LoginPage = ({ onLogin, onSwitchToSignup }: LoginPageProps) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -112,7 +113,10 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
 
           <div className="text-center text-sm text-slate-400">
             계정이 없으신가요?{' '}
-            <button className="text-purple-400 hover:text-purple-300">
+            <button 
+              className="text-purple-400 hover:text-purple-300"
+              onClick={onSwitchToSignup}
+            >
               회원가입
             </button>
           </div>

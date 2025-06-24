@@ -1,18 +1,17 @@
 
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { 
   User, 
-  Eye,
-  CheckCircle, 
-  AlertCircle,
-  Clock,
+  Clock, 
+  Database,
+  CheckCircle,
+  XCircle,
   Wifi,
-  WifiOff,
-  Activity,
-  BarChart3
+  WifiOff
 } from "lucide-react";
 
 interface Student {
@@ -27,182 +26,125 @@ interface Student {
 }
 
 interface StudentGridViewProps {
-  students: Student[];
-  onSelectStudent: (studentId: number) => void;
+  onSelectStudent: (student: Student) => void;
 }
 
-const StudentGridView = ({ students, onSelectStudent }: StudentGridViewProps) => {
-  const getComplexityColor = (complexity: string) => {
-    if (complexity.includes('O(1)')) return 'text-green-400';
-    if (complexity.includes('O(n)') && !complexity.includes('²')) return 'text-yellow-400';
-    if (complexity.includes('O(n²)') || complexity.includes('O(n³)')) return 'text-red-400';
-    return 'text-blue-400';
-  };
+const StudentGridView = ({ onSelectStudent }: StudentGridViewProps) => {
+  const [students] = useState<Student[]>([
+    {
+      id: 1,
+      name: "김민수",
+      isOnline: true,
+      progress: 75,
+      timeComplexity: "O(n²)",
+      spaceComplexity: "O(n)",
+      testsCompleted: 3,
+      totalTests: 5,
+    },
+    {
+      id: 2,
+      name: "이지은",
+      isOnline: true,
+      progress: 90,
+      timeComplexity: "O(n log n)",
+      spaceComplexity: "O(1)",
+      testsCompleted: 4,
+      totalTests: 5,
+    },
+    {
+      id: 3,
+      name: "박준호",
+      isOnline: false,
+      progress: 45,
+      timeComplexity: "O(n³)",
+      spaceComplexity: "O(n²)",
+      testsCompleted: 2,
+      totalTests: 5,
+    },
+    {
+      id: 4,
+      name: "최유진",
+      isOnline: true,
+      progress: 60,
+      timeComplexity: "O(n)",
+      spaceComplexity: "O(n)",
+      testsCompleted: 3,
+      totalTests: 5,
+    },
+  ]);
 
   return (
-    <div className="h-full bg-slate-800 p-6 overflow-auto">
-      <div className="grid grid-cols-2 xl:grid-cols-3 gap-4">
-        {students.map((student) => (
-          <Card 
-            key={student.id} 
-            className={`bg-slate-700 border-slate-600 hover:bg-slate-600 transition-all duration-200 ${
-              !student.isOnline ? 'opacity-60' : ''
-            }`}
-          >
-            <CardContent className="p-4">
-              <div className="space-y-3">
-                {/* Student Header */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center">
-                      <User className="h-4 w-4 text-slate-300" />
-                    </div>
-                    <div>
-                      <h3 className="text-white font-semibold text-sm">{student.name}</h3>
-                      <div className="flex items-center space-x-1">
-                        {student.isOnline ? (
-                          <>
-                            <Wifi className="h-3 w-3 text-green-400" />
-                            <span className="text-xs text-green-400">온라인</span>
-                          </>
-                        ) : (
-                          <>
-                            <WifiOff className="h-3 w-3 text-red-400" />
-                            <span className="text-xs text-red-400">오프라인</span>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onSelectStudent(student.id)}
-                    className="border-slate-600 text-slate-300 hover:bg-slate-600"
-                    disabled={!student.isOnline}
-                  >
-                    <Eye className="h-3 w-3" />
-                  </Button>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
+      {students.map((student) => (
+        <Card 
+          key={student.id} 
+          className="bg-slate-800 border-slate-700 hover:bg-slate-750 transition-colors cursor-pointer"
+          onClick={() => onSelectStudent(student)}
+        >
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
+                  <User className="h-4 w-4 text-white" />
                 </div>
+                <span className="text-white font-medium">{student.name}</span>
+              </div>
+              {student.isOnline ? (
+                <Badge variant="secondary" className="bg-green-600 text-white">
+                  <Wifi className="h-3 w-3 mr-1" />
+                  온라인
+                </Badge>
+              ) : (
+                <Badge variant="secondary" className="bg-gray-600 text-white">
+                  <WifiOff className="h-3 w-3 mr-1" />
+                  오프라인
+                </Badge>
+              )}
+            </div>
 
-                {/* Progress */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-400">진행률</span>
-                    <span className="text-white font-semibold">{student.progress}%</span>
-                  </div>
-                  <Progress 
-                    value={student.progress} 
-                    className="h-2 bg-slate-600"
-                  />
+            <div className="space-y-3">
+              <div>
+                <div className="flex justify-between text-sm text-slate-300 mb-1">
+                  <span>진행률</span>
+                  <span>{student.progress}%</span>
                 </div>
+                <Progress value={student.progress} className="h-2" />
+              </div>
 
-                {/* Tests */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-400">테스트</span>
-                    <span className="text-white font-semibold">
-                      {student.testsCompleted}/{student.totalTests}
-                    </span>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="bg-slate-700 rounded p-2">
+                  <div className="flex items-center space-x-1 text-slate-400 mb-1">
+                    <Clock className="h-3 w-3" />
+                    <span>시간</span>
                   </div>
-                  <div className="flex items-center space-x-1">
-                    <Activity className="h-3 w-3 text-slate-400" />
-                    <div className="flex-1 bg-slate-600 rounded-full h-1">
-                      <div 
-                        className={`h-1 rounded-full transition-all duration-500 ${
-                          student.testsCompleted === student.totalTests ? 'bg-green-500' :
-                          student.testsCompleted > 0 ? 'bg-yellow-500' : 'bg-slate-500'
-                        }`}
-                        style={{ width: `${(student.testsCompleted / student.totalTests) * 100}%` }}
-                      />
-                    </div>
-                  </div>
+                  <span className="text-white font-mono">{student.timeComplexity}</span>
                 </div>
-
-                {/* Status Indicators */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    {student.progress >= 80 ? (
-                      <Badge variant="outline" className="border-green-600 text-green-400 text-xs">
-                        <CheckCircle className="h-2 w-2 mr-1" />
-                        진행 양호
-                      </Badge>
-                    ) : student.progress >= 60 ? (
-                      <Badge variant="outline" className="border-yellow-600 text-yellow-400 text-xs">
-                        <Clock className="h-2 w-2 mr-1" />
-                        진행 중
-                      </Badge>
-                    ) : (
-                      <Badge variant="outline" className="border-red-600 text-red-400 text-xs">
-                        <AlertCircle className="h-2 w-2 mr-1" />
-                        도움 필요
-                      </Badge>
-                    )}
+                <div className="bg-slate-700 rounded p-2">
+                  <div className="flex items-center space-x-1 text-slate-400 mb-1">
+                    <Database className="h-3 w-3" />
+                    <span>공간</span>
                   </div>
-                  
-                  <BarChart3 className="h-3 w-3 text-slate-400" />
-                </div>
-
-                {/* Complexity Stats */}
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="text-center">
-                    <div className="text-slate-400">시간 복잡도</div>
-                    <div className={`font-semibold ${getComplexityColor(student.timeComplexity)}`}>
-                      {student.timeComplexity}
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-slate-400">공간 복잡도</div>
-                    <div className={`font-semibold ${getComplexityColor(student.spaceComplexity)}`}>
-                      {student.spaceComplexity}
-                    </div>
-                  </div>
+                  <span className="text-white font-mono">{student.spaceComplexity}</span>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
 
-      {/* Summary Stats */}
-      <div className="mt-6 grid grid-cols-4 gap-4">
-        <Card className="bg-slate-700 border-slate-600">
-          <CardContent className="p-3 text-center">
-            <div className="text-2xl font-bold text-green-400">
-              {students.filter(s => s.isOnline).length}
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-slate-400">테스트</span>
+                <div className="flex items-center space-x-1">
+                  {student.testsCompleted === student.totalTests ? (
+                    <CheckCircle className="h-3 w-3 text-green-500" />
+                  ) : (
+                    <XCircle className="h-3 w-3 text-red-500" />
+                  )}
+                  <span className="text-white">
+                    {student.testsCompleted}/{student.totalTests}
+                  </span>
+                </div>
+              </div>
             </div>
-            <div className="text-xs text-slate-400">온라인 학생</div>
           </CardContent>
         </Card>
-        
-        <Card className="bg-slate-700 border-slate-600">
-          <CardContent className="p-3 text-center">
-            <div className="text-2xl font-bold text-yellow-400">
-              {students.filter(s => s.progress >= 80).length}
-            </div>
-            <div className="text-xs text-slate-400">완료 임박</div>
-          </CardContent>
-        </Card>
-        
-        <Card className="bg-slate-700 border-slate-600">
-          <CardContent className="p-3 text-center">
-            <div className="text-2xl font-bold text-blue-400">
-              {Math.round(students.reduce((sum, s) => sum + s.progress, 0) / students.length)}%
-            </div>
-            <div className="text-xs text-slate-400">평균 진행률</div>
-          </CardContent>
-        </Card>
-        
-        <Card className="bg-slate-700 border-slate-600">
-          <CardContent className="p-3 text-center">
-            <div className="text-2xl font-bold text-purple-400">
-              {students.filter(s => s.testsCompleted === s.totalTests).length}
-            </div>
-            <div className="text-xs text-slate-400">완료 학생</div>
-          </CardContent>
-        </Card>
-      </div>
+      ))}
     </div>
   );
 };

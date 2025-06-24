@@ -5,24 +5,37 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { 
   Code, 
   Users, 
   Brain, 
-  Video, 
   Zap,
   GraduationCap,
   BookOpen,
   UserPlus,
-  Play
+  Play,
+  LogIn
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import LoginPage from "@/components/LoginPage";
+import SignupPage from "@/components/SignupPage";
 
 const Index = () => {
   const navigate = useNavigate();
   const [classId, setClassId] = useState("");
   const [userName, setUserName] = useState("");
+  const [currentView, setCurrentView] = useState<'home' | 'login' | 'signup'>('home');
+  const [userRole, setUserRole] = useState<'teacher' | 'student' | null>(null);
+
+  const handleLogin = (role: 'teacher' | 'student') => {
+    setUserRole(role);
+    setCurrentView('home');
+  };
+
+  const handleSignup = (role: 'teacher' | 'student') => {
+    setUserRole(role);
+    setCurrentView('home');
+  };
 
   const createClass = () => {
     const sessionId = Math.random().toString(36).substring(2, 15);
@@ -34,6 +47,14 @@ const Index = () => {
       navigate(`/class/${classId}?role=student&name=${encodeURIComponent(userName)}`);
     }
   };
+
+  if (currentView === 'login') {
+    return <LoginPage onLogin={handleLogin} />;
+  }
+
+  if (currentView === 'signup') {
+    return <SignupPage onSignup={handleSignup} />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
@@ -52,10 +73,39 @@ const Index = () => {
             </div>
             
             <div className="flex items-center space-x-4">
-              <Badge variant="outline" className="border-purple-500 text-purple-300">
-                <GraduationCap className="h-3 w-3 mr-1" />
-                교육용 플랫폼
-              </Badge>
+              {userRole ? (
+                <div className="flex items-center space-x-3">
+                  <Badge variant="outline" className="border-purple-500 text-purple-300">
+                    <GraduationCap className="h-3 w-3 mr-1" />
+                    {userRole === 'teacher' ? '선생님' : '학생'}
+                  </Badge>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setUserRole(null)}
+                    className="border-slate-600 text-slate-300"
+                  >
+                    로그아웃
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setCurrentView('login')}
+                    className="border-slate-600 text-slate-300"
+                  >
+                    <LogIn className="h-4 w-4 mr-2" />
+                    로그인
+                  </Button>
+                  <Button 
+                    onClick={() => setCurrentView('signup')}
+                    className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                  >
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    회원가입
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -91,11 +141,11 @@ const Index = () => {
                 새로운 수업을 생성하고 학생들을 관리하세요. AI 분석 도구와 함께 효과적인 코딩 교육을 진행할 수 있습니다.
               </p>
               <Button 
-                onClick={createClass}
+                onClick={userRole ? createClass : () => setCurrentView('login')}
                 className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800"
               >
                 <Play className="h-4 w-4 mr-2" />
-                수업 생성하기
+                {userRole ? '수업 생성하기' : '로그인 후 시작'}
               </Button>
             </CardContent>
           </Card>
@@ -114,36 +164,46 @@ const Index = () => {
               <p className="text-slate-300">
                 수업 ID를 입력하여 진행 중인 코딩 수업에 참여하세요.
               </p>
-              <div className="space-y-3">
-                <div>
-                  <Label htmlFor="classId" className="text-slate-300">수업 ID</Label>
-                  <Input
-                    id="classId"
-                    value={classId}
-                    onChange={(e) => setClassId(e.target.value)}
-                    placeholder="수업 ID를 입력하세요"
-                    className="bg-slate-700 border-slate-600 text-white"
-                  />
+              {userRole ? (
+                <div className="space-y-3">
+                  <div>
+                    <Label htmlFor="classId" className="text-slate-300">수업 ID</Label>
+                    <Input
+                      id="classId"
+                      value={classId}
+                      onChange={(e) => setClassId(e.target.value)}
+                      placeholder="수업 ID를 입력하세요"
+                      className="bg-slate-700 border-slate-600 text-white"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="userName" className="text-slate-300">이름</Label>
+                    <Input
+                      id="userName"
+                      value={userName}
+                      onChange={(e) => setUserName(e.target.value)}
+                      placeholder="이름을 입력하세요"
+                      className="bg-slate-700 border-slate-600 text-white"
+                    />
+                  </div>
+                  <Button 
+                    onClick={joinClass}
+                    disabled={!classId || !userName}
+                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:opacity-50"
+                  >
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    수업 참여하기
+                  </Button>
                 </div>
-                <div>
-                  <Label htmlFor="userName" className="text-slate-300">이름</Label>
-                  <Input
-                    id="userName"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                    placeholder="이름을 입력하세요"
-                    className="bg-slate-700 border-slate-600 text-white"
-                  />
-                </div>
+              ) : (
                 <Button 
-                  onClick={joinClass}
-                  disabled={!classId || !userName}
-                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:opacity-50"
+                  onClick={() => setCurrentView('login')}
+                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
                 >
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  수업 참여하기
+                  <LogIn className="h-4 w-4 mr-2" />
+                  로그인 후 참여
                 </Button>
-              </div>
+              )}
             </CardContent>
           </Card>
         </div>
