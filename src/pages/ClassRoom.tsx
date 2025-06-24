@@ -22,13 +22,16 @@ import {
   Grid3x3,
   Eye,
   Share,
-  Monitor
+  Monitor,
+  Palette
 } from "lucide-react";
 import CodeEditor from "@/components/CodeEditor";
 import StudentGridView from "@/components/StudentGridView";
 import StudentDetailView from "@/components/StudentDetailView";
 import AIAnalysis from "@/components/AIAnalysis";
 import ProblemPanel from "@/components/ProblemPanel";
+import ClassSummaryReport from "@/components/ClassSummaryReport";
+import DrawingOverlay from "@/components/DrawingOverlay";
 
 const ClassRoom = () => {
   const { sessionId } = useParams();
@@ -42,14 +45,16 @@ const ClassRoom = () => {
   const [selectedStudent, setSelectedStudent] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'detail'>('grid');
   const [sharedCodeMode, setSharedCodeMode] = useState<'teacher' | 'student' | null>(null);
+  const [showSummaryReport, setShowSummaryReport] = useState(false);
+  const [isDrawingMode, setIsDrawingMode] = useState(false);
   
   const [students] = useState([
-    { id: 1, name: "김민수", isOnline: true, progress: 75, codeQuality: 85 },
-    { id: 2, name: "이영희", isOnline: true, progress: 60, codeQuality: 70 },
-    { id: 3, name: "박철수", isOnline: false, progress: 45, codeQuality: 60 },
-    { id: 4, name: "정미라", isOnline: true, progress: 90, codeQuality: 95 },
-    { id: 5, name: "한지우", isOnline: true, progress: 55, codeQuality: 65 },
-    { id: 6, name: "오성민", isOnline: true, progress: 80, codeQuality: 88 }
+    { id: 1, name: "김민수", isOnline: true, progress: 75, timeComplexity: "O(n²)", spaceComplexity: "O(n)", testsCompleted: 3, totalTests: 4 },
+    { id: 2, name: "이영희", isOnline: true, progress: 60, timeComplexity: "O(n)", spaceComplexity: "O(1)", testsCompleted: 2, totalTests: 4 },
+    { id: 3, name: "박철수", isOnline: false, progress: 45, timeComplexity: "O(n²)", spaceComplexity: "O(n)", testsCompleted: 1, totalTests: 4 },
+    { id: 4, name: "정미라", isOnline: true, progress: 90, timeComplexity: "O(n)", spaceComplexity: "O(1)", testsCompleted: 4, totalTests: 4 },
+    { id: 5, name: "한지우", isOnline: true, progress: 55, timeComplexity: "O(n²)", spaceComplexity: "O(n)", testsCompleted: 2, totalTests: 4 },
+    { id: 6, name: "오성민", isOnline: true, progress: 80, timeComplexity: "O(n)", spaceComplexity: "O(1)", testsCompleted: 3, totalTests: 4 }
   ]);
 
   const [currentCode, setCurrentCode] = useState(`// 문제: 배열에서 중복된 요소를 제거하는 함수를 작성하세요
@@ -61,6 +66,10 @@ function removeDuplicates(arr) {
   const isTeacher = role === "teacher";
 
   const toggleClass = () => {
+    if (isClassStarted) {
+      // 수업 종료 시 리포트 표시
+      setShowSummaryReport(true);
+    }
     setIsClassStarted(!isClassStarted);
   };
 
@@ -179,6 +188,18 @@ function removeDuplicates(arr) {
                       학생 코드 공유
                     </Button>
                   )}
+
+                  {selectedStudent && viewMode === 'detail' && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsDrawingMode(!isDrawingMode)}
+                      className={`border-slate-600 ${isDrawingMode ? 'bg-orange-600' : ''}`}
+                    >
+                      <Palette className="h-4 w-4 mr-2" />
+                      그림판
+                    </Button>
+                  )}
                 </div>
               )}
 
@@ -205,7 +226,6 @@ function removeDuplicates(arr) {
                 </Button>
               </div>
 
-              {/* Students Count */}
               <div className="flex items-center space-x-2">
                 <Users className="h-4 w-4 text-slate-400" />
                 <span className="text-sm text-slate-300">{students.filter(s => s.isOnline).length}/{students.length}</span>
@@ -223,7 +243,7 @@ function removeDuplicates(arr) {
         </div>
 
         {/* Center Panel - Code Editor or Student Views */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col relative">
           <div className="border-b border-slate-700 px-4 py-2 bg-slate-800/30">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
@@ -253,7 +273,7 @@ function removeDuplicates(arr) {
             </div>
           </div>
 
-          <div className="flex-1">
+          <div className="flex-1 relative">
             {isTeacher ? (
               viewMode === 'grid' ? (
                 <StudentGridView 
@@ -267,12 +287,31 @@ function removeDuplicates(arr) {
                 />
               )
             ) : (
-              <CodeEditor 
-                code={currentCode} 
-                onChange={setCurrentCode}
-                readOnly={!isClassStarted || sharedCodeMode === 'teacher'}
-              />
+              <div className="relative h-full">
+                <CodeEditor 
+                  code={currentCode} 
+                  onChange={setCurrentCode}
+                  readOnly={!isClassStarted || sharedCodeMode === 'teacher'}
+                />
+                {/* 학생 화면에서 코드 공유 표시 */}
+                {sharedCodeMode && (
+                  <div className="absolute top-4 right-4 z-10">
+                    <Badge className={`${
+                      sharedCodeMode === 'teacher' ? 'bg-green-600' : 'bg-blue-600'
+                    } animate-pulse`}>
+                      <Share className="h-3 w-3 mr-1" />
+                      {sharedCodeMode === 'teacher' ? '선생님 화면 공유중' : '내 화면 공유중'}
+                    </Badge>
+                  </div>
+                )}
+              </div>
             )}
+
+            {/* Drawing Overlay */}
+            <DrawingOverlay 
+              isActive={isDrawingMode} 
+              onClose={() => setIsDrawingMode(false)} 
+            />
           </div>
         </div>
 
@@ -299,6 +338,14 @@ function removeDuplicates(arr) {
           )}
         </div>
       </div>
+
+      {/* Class Summary Report Modal */}
+      {showSummaryReport && (
+        <ClassSummaryReport
+          students={students.map(s => ({ ...s, codeQuality: 85, timeSpent: "15:30" }))}
+          onClose={() => setShowSummaryReport(false)}
+        />
+      )}
     </div>
   );
 };

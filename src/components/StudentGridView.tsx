@@ -5,14 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { 
   User, 
-  Eye, 
-  Code, 
+  Eye,
   CheckCircle, 
   AlertCircle,
   Clock,
-  TrendingUp,
   Wifi,
-  WifiOff
+  WifiOff,
+  Activity,
+  BarChart3
 } from "lucide-react";
 
 interface Student {
@@ -20,7 +20,10 @@ interface Student {
   name: string;
   isOnline: boolean;
   progress: number;
-  codeQuality: number;
+  timeComplexity: string;
+  spaceComplexity: string;
+  testsCompleted: number;
+  totalTests: number;
 }
 
 interface StudentGridViewProps {
@@ -29,16 +32,11 @@ interface StudentGridViewProps {
 }
 
 const StudentGridView = ({ students, onSelectStudent }: StudentGridViewProps) => {
-  const getProgressColor = (progress: number) => {
-    if (progress >= 80) return "bg-green-500";
-    if (progress >= 60) return "bg-yellow-500";
-    return "bg-red-500";
-  };
-
-  const getQualityColor = (quality: number) => {
-    if (quality >= 85) return "text-green-400";
-    if (quality >= 70) return "text-yellow-400";
-    return "text-red-400";
+  const getComplexityColor = (complexity: string) => {
+    if (complexity.includes('O(1)')) return 'text-green-400';
+    if (complexity.includes('O(n)') && !complexity.includes('²')) return 'text-yellow-400';
+    if (complexity.includes('O(n²)') || complexity.includes('O(n³)')) return 'text-red-400';
+    return 'text-blue-400';
   };
 
   return (
@@ -100,23 +98,23 @@ const StudentGridView = ({ students, onSelectStudent }: StudentGridViewProps) =>
                   />
                 </div>
 
-                {/* Code Quality */}
+                {/* Tests */}
                 <div className="space-y-1">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-400">코드 품질</span>
-                    <span className={`font-semibold ${getQualityColor(student.codeQuality)}`}>
-                      {student.codeQuality}/100
+                    <span className="text-slate-400">테스트</span>
+                    <span className="text-white font-semibold">
+                      {student.testsCompleted}/{student.totalTests}
                     </span>
                   </div>
                   <div className="flex items-center space-x-1">
-                    <TrendingUp className="h-3 w-3 text-slate-400" />
+                    <Activity className="h-3 w-3 text-slate-400" />
                     <div className="flex-1 bg-slate-600 rounded-full h-1">
                       <div 
                         className={`h-1 rounded-full transition-all duration-500 ${
-                          student.codeQuality >= 85 ? 'bg-green-500' :
-                          student.codeQuality >= 70 ? 'bg-yellow-500' : 'bg-red-500'
+                          student.testsCompleted === student.totalTests ? 'bg-green-500' :
+                          student.testsCompleted > 0 ? 'bg-yellow-500' : 'bg-slate-500'
                         }`}
-                        style={{ width: `${student.codeQuality}%` }}
+                        style={{ width: `${(student.testsCompleted / student.totalTests) * 100}%` }}
                       />
                     </div>
                   </div>
@@ -143,22 +141,22 @@ const StudentGridView = ({ students, onSelectStudent }: StudentGridViewProps) =>
                     )}
                   </div>
                   
-                  <Code className="h-3 w-3 text-slate-400" />
+                  <BarChart3 className="h-3 w-3 text-slate-400" />
                 </div>
 
-                {/* Quick Stats */}
-                <div className="grid grid-cols-3 gap-2 text-xs">
+                {/* Complexity Stats */}
+                <div className="grid grid-cols-2 gap-2 text-xs">
                   <div className="text-center">
-                    <div className="text-slate-400">시간</div>
-                    <div className="text-white font-semibold">12:34</div>
+                    <div className="text-slate-400">시간 복잡도</div>
+                    <div className={`font-semibold ${getComplexityColor(student.timeComplexity)}`}>
+                      {student.timeComplexity}
+                    </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-slate-400">복잡도</div>
-                    <div className="text-white font-semibold">O(n)</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-slate-400">테스트</div>
-                    <div className="text-green-400 font-semibold">3/4</div>
+                    <div className="text-slate-400">공간 복잡도</div>
+                    <div className={`font-semibold ${getComplexityColor(student.spaceComplexity)}`}>
+                      {student.spaceComplexity}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -199,9 +197,9 @@ const StudentGridView = ({ students, onSelectStudent }: StudentGridViewProps) =>
         <Card className="bg-slate-700 border-slate-600">
           <CardContent className="p-3 text-center">
             <div className="text-2xl font-bold text-purple-400">
-              {Math.round(students.reduce((sum, s) => sum + s.codeQuality, 0) / students.length)}
+              {students.filter(s => s.testsCompleted === s.totalTests).length}
             </div>
-            <div className="text-xs text-slate-400">평균 품질</div>
+            <div className="text-xs text-slate-400">완료 학생</div>
           </CardContent>
         </Card>
       </div>

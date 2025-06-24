@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,8 +11,10 @@ import {
   Star,
   CheckCircle,
   Play,
-  RotateCcw
+  RotateCcw,
+  Plus
 } from "lucide-react";
+import ProblemCreator from "./ProblemCreator";
 
 interface ProblemPanelProps {
   isTeacher: boolean;
@@ -21,8 +22,9 @@ interface ProblemPanelProps {
 
 const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
   const [selectedProblem, setSelectedProblem] = useState(0);
+  const [showProblemCreator, setShowProblemCreator] = useState(false);
   
-  const problems = [
+  const [problems, setProblems] = useState([
     {
       id: 1,
       title: "Remove Duplicates",
@@ -62,7 +64,7 @@ const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
         "s는 '(', ')', '{', '}', '[', ']'로만 구성됩니다"
       ]
     }
-  ];
+  ]);
 
   const currentProblem = problems[selectedProblem];
 
@@ -73,6 +75,20 @@ const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
       case 'Hard': return 'bg-red-600 text-red-100';
       default: return 'bg-gray-600 text-gray-100';
     }
+  };
+
+  const handleSaveProblem = (newProblem: any) => {
+    const problemWithId = {
+      ...newProblem,
+      id: problems.length + 1,
+      examples: newProblem.testCases.map((tc: any) => ({
+        input: tc.input,
+        output: tc.output,
+        explanation: tc.explanation || ""
+      })),
+      constraints: ["새로 생성된 문제입니다."]
+    };
+    setProblems([...problems, problemWithId]);
   };
 
   return (
@@ -98,7 +114,17 @@ const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
               {isTeacher && (
                 <Card className="bg-slate-700 border-slate-600">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-white text-sm">수업 문제 선택</CardTitle>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-white text-sm">수업 문제 선택</CardTitle>
+                      <Button
+                        onClick={() => setShowProblemCreator(true)}
+                        size="sm"
+                        className="bg-green-600 hover:bg-green-700"
+                      >
+                        <Plus className="h-4 w-4 mr-1" />
+                        문제 생성
+                      </Button>
+                    </div>
                   </CardHeader>
                   <CardContent className="space-y-2">
                     {problems.map((problem, index) => (
@@ -243,6 +269,14 @@ const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
           </TabsContent>
         </div>
       </Tabs>
+
+      {/* Problem Creator Modal */}
+      {showProblemCreator && (
+        <ProblemCreator
+          onClose={() => setShowProblemCreator(false)}
+          onSave={handleSaveProblem}
+        />
+      )}
     </div>
   );
 };
