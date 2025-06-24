@@ -57,13 +57,13 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-slate-900">
       {/* Header */}
-      <header className="border-b border-slate-700/50 bg-slate-900/50 backdrop-blur-sm">
+      <header className="border-b border-slate-700 bg-slate-800">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg">
+              <div className="p-2 bg-slate-700 rounded-lg">
                 <Code className="h-6 w-6 text-white" />
               </div>
               <div>
@@ -75,7 +75,7 @@ const Index = () => {
             <div className="flex items-center space-x-4">
               {userRole ? (
                 <div className="flex items-center space-x-3">
-                  <Badge variant="outline" className="border-purple-500 text-purple-300">
+                  <Badge variant="outline" className="border-slate-500 text-slate-300">
                     <GraduationCap className="h-3 w-3 mr-1" />
                     {userRole === 'teacher' ? '선생님' : '학생'}
                   </Badge>
@@ -99,7 +99,7 @@ const Index = () => {
                   </Button>
                   <Button 
                     onClick={() => setCurrentView('signup')}
-                    className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                    className="bg-slate-700 hover:bg-slate-600 text-white"
                   >
                     <UserPlus className="h-4 w-4 mr-2" />
                     회원가입
@@ -116,7 +116,7 @@ const Index = () => {
         <div className="text-center max-w-4xl mx-auto mb-16">
           <h1 className="text-5xl font-bold text-white mb-6 leading-tight">
             AI 기반 실시간
-            <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent"> 코딩 수업</span>
+            <span className="text-slate-300"> 코딩 수업</span>
           </h1>
           <p className="text-xl text-slate-300 mb-8 leading-relaxed">
             선생님과 학생들이 함께 코드를 작성하고, AI가 실시간으로 코드를 분석하여 
@@ -127,10 +127,10 @@ const Index = () => {
         {/* Action Cards */}
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
           {/* Teacher Card */}
-          <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm hover:bg-slate-800/70 transition-all duration-300">
+          <Card className="bg-slate-800 border-slate-700 hover:bg-slate-750 transition-all duration-300">
             <CardHeader>
               <CardTitle className="flex items-center space-x-3 text-white">
-                <div className="p-2 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg">
+                <div className="p-2 bg-slate-700 rounded-lg">
                   <GraduationCap className="h-5 w-5 text-white" />
                 </div>
                 <span>선생님으로 시작</span>
@@ -142,7 +142,7 @@ const Index = () => {
               </p>
               <Button 
                 onClick={userRole ? createClass : () => setCurrentView('login')}
-                className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800"
+                className="w-full bg-slate-700 hover:bg-slate-600 text-white"
               >
                 <Play className="h-4 w-4 mr-2" />
                 {userRole ? '수업 생성하기' : '로그인 후 시작'}
@@ -151,10 +151,10 @@ const Index = () => {
           </Card>
 
           {/* Student Card */}
-          <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm hover:bg-slate-800/70 transition-all duration-300">
+          <Card className="bg-slate-800 border-slate-700 hover:bg-slate-750 transition-all duration-300">
             <CardHeader>
               <CardTitle className="flex items-center space-x-3 text-white">
-                <div className="p-2 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg">
+                <div className="p-2 bg-slate-600 rounded-lg">
                   <BookOpen className="h-5 w-5 text-white" />
                 </div>
                 <span>학생으로 참여</span>
@@ -189,7 +189,7 @@ const Index = () => {
                   <Button 
                     onClick={joinClass}
                     disabled={!classId || !userName}
-                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:opacity-50"
+                    className="w-full bg-slate-600 hover:bg-slate-500 text-white disabled:opacity-50"
                   >
                     <UserPlus className="h-4 w-4 mr-2" />
                     수업 참여하기
@@ -198,7 +198,7 @@ const Index = () => {
               ) : (
                 <Button 
                   onClick={() => setCurrentView('login')}
-                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+                  className="w-full bg-slate-600 hover:bg-slate-500 text-white"
                 >
                   <LogIn className="h-4 w-4 mr-2" />
                   로그인 후 참여
@@ -210,9 +210,9 @@ const Index = () => {
 
         {/* Features */}
         <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          <Card className="bg-slate-800/30 border-slate-700/50 backdrop-blur-sm">
+          <Card className="bg-slate-800 border-slate-700">
             <CardContent className="p-6 text-center">
-              <div className="mx-auto w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center mb-4">
+              <div className="mx-auto w-12 h-12 bg-slate-700 rounded-full flex items-center justify-center mb-4">
                 <Brain className="h-6 w-6 text-white" />
               </div>
               <h3 className="text-lg font-semibold text-white mb-2">AI 실시간 분석</h3>
@@ -222,9 +222,9 @@ const Index = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-slate-800/30 border-slate-700/50 backdrop-blur-sm">
+          <Card className="bg-slate-800 border-slate-700">
             <CardContent className="p-6 text-center">
-              <div className="mx-auto w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mb-4">
+              <div className="mx-auto w-12 h-12 bg-slate-600 rounded-full flex items-center justify-center mb-4">
                 <Users className="h-6 w-6 text-white" />
               </div>
               <h3 className="text-lg font-semibold text-white mb-2">그리드 뷰 관리</h3>
@@ -234,9 +234,9 @@ const Index = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-slate-800/30 border-slate-700/50 backdrop-blur-sm">
+          <Card className="bg-slate-800 border-slate-700">
             <CardContent className="p-6 text-center">
-              <div className="mx-auto w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center mb-4">
+              <div className="mx-auto w-12 h-12 bg-slate-500 rounded-full flex items-center justify-center mb-4">
                 <Zap className="h-6 w-6 text-white" />
               </div>
               <h3 className="text-lg font-semibold text-white mb-2">실시간 공유</h3>
