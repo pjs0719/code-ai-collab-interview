@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import { useNavigate } from "react-router-dom";
 import { 
   BookOpen, 
   Target, 
@@ -16,15 +17,14 @@ import {
   Search
 } from "lucide-react";
 import ProblemCreator from "./ProblemCreator";
-import ProblemSelector from "./ProblemSelector";
 
 interface ProblemPanelProps {
   isTeacher: boolean;
 }
 
 const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
+  const navigate = useNavigate();
   const [showProblemCreator, setShowProblemCreator] = useState(false);
-  const [showProblemSelector, setShowProblemSelector] = useState(false);
   
   const [problems, setProblems] = useState([
     {
@@ -97,12 +97,8 @@ const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
     setProblems([...problems, problemWithId]);
   };
 
-  const handleSelectProblem = (problem: any) => {
-    setCurrentProblem(problem);
-    // Add to problems list if not already there
-    if (!problems.find(p => p.id === problem.id)) {
-      setProblems([...problems, problem]);
-    }
+  const handleProblemSearch = () => {
+    navigate("/problems");
   };
 
   return (
@@ -132,7 +128,7 @@ const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
                       <CardTitle className="text-gray-900 text-sm">수업 문제</CardTitle>
                       <div className="flex gap-2">
                         <Button
-                          onClick={() => setShowProblemSelector(true)}
+                          onClick={handleProblemSearch}
                           size="sm"
                           variant="outline"
                           className="border-blue-200 text-blue-700 hover:bg-blue-50"
@@ -282,16 +278,6 @@ const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
         <ProblemCreator
           onClose={() => setShowProblemCreator(false)}
           onSave={handleSaveProblem}
-        />
-      )}
-
-      {/* Problem Selector Modal */}
-      {showProblemSelector && (
-        <ProblemSelector
-          isOpen={showProblemSelector}
-          onClose={() => setShowProblemSelector(false)}
-          onSelect={handleSelectProblem}
-          currentProblem={currentProblem}
         />
       )}
     </div>
