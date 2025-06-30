@@ -12,7 +12,6 @@ import {
   Star,
   CheckCircle,
   Play,
-  RotateCcw,
   Plus,
   Search
 } from "lucide-react";
@@ -31,7 +30,7 @@ const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
     {
       id: 1,
       title: "Remove Duplicates",
-      difficulty: "Easy",
+      difficulty: "Easy" as const,
       category: "Array",
       timeLimit: 30,
       description: "주어진 정수 배열에서 중복된 요소를 제거하는 함수를 작성하세요.",
@@ -47,14 +46,12 @@ const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
         "-10³ ≤ arr[i] ≤ 10³",
         "순서는 유지되어야 합니다"
       ],
-      tags: ["array", "hash-table"],
-      popularity: 95,
-      acceptance: 87
+      tags: ["array", "hash-table"]
     },
     {
       id: 2,
       title: "Valid Parentheses",
-      difficulty: "Easy", 
+      difficulty: "Easy" as const,
       category: "Stack",
       timeLimit: 25,
       description: "괄호로 이루어진 문자열이 올바른지 판단하는 함수를 작성하세요.",
@@ -69,9 +66,7 @@ const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
         "1 ≤ s.length ≤ 10⁴",
         "s는 '(', ')', '{', '}', '[', ']'로만 구성됩니다"
       ],
-      tags: ["stack", "string"],
-      popularity: 92,
-      acceptance: 73
+      tags: ["stack", "string"]
     }
   ]);
 
@@ -90,15 +85,14 @@ const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
     const problemWithId = {
       ...newProblem,
       id: problems.length + 1,
+      difficulty: newProblem.difficulty as "Easy" | "Medium" | "Hard",
       examples: newProblem.testCases.map((tc: any) => ({
         input: tc.input,
         output: tc.output,
         explanation: tc.explanation || ""
       })),
       constraints: ["새로 생성된 문제입니다."],
-      tags: ["custom"],
-      popularity: 0,
-      acceptance: 0
+      tags: ["custom"]
     };
     setProblems([...problems, problemWithId]);
   };
