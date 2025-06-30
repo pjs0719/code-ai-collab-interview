@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,17 +13,19 @@ import {
   CheckCircle,
   Play,
   RotateCcw,
-  Plus
+  Plus,
+  Search
 } from "lucide-react";
 import ProblemCreator from "./ProblemCreator";
+import ProblemSelector from "./ProblemSelector";
 
 interface ProblemPanelProps {
   isTeacher: boolean;
 }
 
 const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
-  const [selectedProblem, setSelectedProblem] = useState(0);
   const [showProblemCreator, setShowProblemCreator] = useState(false);
+  const [showProblemSelector, setShowProblemSelector] = useState(false);
   
   const [problems, setProblems] = useState([
     {
@@ -43,7 +46,10 @@ const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
         "1 ≤ arr.length ≤ 10⁴",
         "-10³ ≤ arr[i] ≤ 10³",
         "순서는 유지되어야 합니다"
-      ]
+      ],
+      tags: ["array", "hash-table"],
+      popularity: 95,
+      acceptance: 87
     },
     {
       id: 2,
@@ -62,18 +68,21 @@ const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
       constraints: [
         "1 ≤ s.length ≤ 10⁴",
         "s는 '(', ')', '{', '}', '[', ']'로만 구성됩니다"
-      ]
+      ],
+      tags: ["stack", "string"],
+      popularity: 92,
+      acceptance: 73
     }
   ]);
 
-  const currentProblem = problems[selectedProblem];
+  const [currentProblem, setCurrentProblem] = useState(problems[0]);
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'Easy': return 'bg-green-600 text-green-100';
-      case 'Medium': return 'bg-yellow-600 text-yellow-100';
-      case 'Hard': return 'bg-red-600 text-red-100';
-      default: return 'bg-gray-600 text-gray-100';
+      case 'Easy': return 'bg-green-100 text-green-800 border-green-200';
+      case 'Medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'Hard': return 'bg-red-100 text-red-800 border-red-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
@@ -86,21 +95,32 @@ const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
         output: tc.output,
         explanation: tc.explanation || ""
       })),
-      constraints: ["새로 생성된 문제입니다."]
+      constraints: ["새로 생성된 문제입니다."],
+      tags: ["custom"],
+      popularity: 0,
+      acceptance: 0
     };
     setProblems([...problems, problemWithId]);
   };
 
+  const handleSelectProblem = (problem: any) => {
+    setCurrentProblem(problem);
+    // Add to problems list if not already there
+    if (!problems.find(p => p.id === problem.id)) {
+      setProblems([...problems, problem]);
+    }
+  };
+
   return (
-    <div className="h-full bg-slate-800 overflow-auto">
+    <div className="h-full bg-white border-r border-gray-200 overflow-auto">
       <Tabs defaultValue="problem" className="h-full flex flex-col">
-        <div className="border-b border-slate-700 px-4 py-2">
-          <TabsList className="grid w-full grid-cols-2 bg-slate-700">
-            <TabsTrigger value="problem" className="text-slate-300 data-[state=active]:bg-slate-600 data-[state=active]:text-white">
+        <div className="border-b border-gray-200 px-4 py-2 bg-gray-50">
+          <TabsList className="grid w-full grid-cols-2 bg-gray-100">
+            <TabsTrigger value="problem" className="text-gray-600 data-[state=active]:bg-white data-[state=active]:text-gray-900">
               <BookOpen className="h-4 w-4 mr-2" />
               문제
             </TabsTrigger>
-            <TabsTrigger value="testcases" className="text-slate-300 data-[state=active]:bg-slate-600 data-[state=active]:text-white">
+            <TabsTrigger value="testcases" className="text-gray-600 data-[state=active]:bg-white data-[state=active]:text-gray-900">
               <Target className="h-4 w-4 mr-2" />
               테스트
             </TabsTrigger>
@@ -112,56 +132,49 @@ const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
             <div className="p-4 space-y-4">
               {/* Problem Selector (Teacher Only) */}
               {isTeacher && (
-                <Card className="bg-slate-700 border-slate-600">
+                <Card className="bg-white border border-gray-200 shadow-sm">
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-white text-sm">수업 문제 선택</CardTitle>
-                      <Button
-                        onClick={() => setShowProblemCreator(true)}
-                        size="sm"
-                        className="bg-green-600 hover:bg-green-700"
-                      >
-                        <Plus className="h-4 w-4 mr-1" />
-                        문제 생성
-                      </Button>
+                      <CardTitle className="text-gray-900 text-sm">수업 문제</CardTitle>
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={() => setShowProblemSelector(true)}
+                          size="sm"
+                          variant="outline"
+                          className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                        >
+                          <Search className="h-4 w-4 mr-1" />
+                          문제 찾기
+                        </Button>
+                        <Button
+                          onClick={() => setShowProblemCreator(true)}
+                          size="sm"
+                          className="bg-green-600 hover:bg-green-700 text-white"
+                        >
+                          <Plus className="h-4 w-4 mr-1" />
+                          문제 생성
+                        </Button>
+                      </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-2">
-                    {problems.map((problem, index) => (
-                      <Button
-                        key={problem.id}
-                        variant={selectedProblem === index ? "default" : "outline"}
-                        size="sm"
-                        className="w-full justify-start text-left"
-                        onClick={() => setSelectedProblem(index)}
-                      >
-                        <div className="flex items-center justify-between w-full">
-                          <span>{problem.title}</span>
-                          <Badge className={getDifficultyColor(problem.difficulty)}>
-                            {problem.difficulty}
-                          </Badge>
-                        </div>
-                      </Button>
-                    ))}
-                  </CardContent>
                 </Card>
               )}
 
               {/* Problem Details */}
-              <Card className="bg-slate-700 border-slate-600">
+              <Card className="bg-white border border-gray-200 shadow-sm">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-white">{currentProblem.title}</CardTitle>
+                    <CardTitle className="text-gray-900">{currentProblem.title}</CardTitle>
                     <div className="flex items-center space-x-2">
                       <Badge className={getDifficultyColor(currentProblem.difficulty)}>
                         {currentProblem.difficulty}
                       </Badge>
-                      <Badge variant="outline" className="border-slate-600 text-slate-300">
+                      <Badge variant="outline" className="border-gray-300 text-gray-600">
                         {currentProblem.category}
                       </Badge>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-4 text-sm text-slate-400">
+                  <div className="flex items-center space-x-4 text-sm text-gray-500">
                     <div className="flex items-center space-x-1">
                       <Clock className="h-3 w-3" />
                       <span>{currentProblem.timeLimit}분</span>
@@ -174,46 +187,46 @@ const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <h4 className="text-white font-semibold mb-2">문제 설명</h4>
-                    <p className="text-slate-300 text-sm leading-relaxed">
+                    <h4 className="text-gray-900 font-semibold mb-2">문제 설명</h4>
+                    <p className="text-gray-700 text-sm leading-relaxed">
                       {currentProblem.description}
                     </p>
                   </div>
 
-                  <Separator className="bg-slate-600" />
+                  <Separator className="bg-gray-200" />
 
                   <div>
-                    <h4 className="text-white font-semibold mb-3">예시</h4>
+                    <h4 className="text-gray-900 font-semibold mb-3">예시</h4>
                     {currentProblem.examples.map((example, index) => (
-                      <div key={index} className="bg-slate-800 p-3 rounded-lg space-y-2">
+                      <div key={index} className="bg-gray-50 p-3 rounded-lg space-y-2 border border-gray-200">
                         <div>
-                          <span className="text-slate-400 text-xs">입력:</span>
-                          <code className="block text-green-400 font-mono text-sm mt-1">
+                          <span className="text-gray-500 text-xs">입력:</span>
+                          <code className="block text-green-700 font-mono text-sm mt-1 bg-green-50 p-1 rounded">
                             {example.input}
                           </code>
                         </div>
                         <div>
-                          <span className="text-slate-400 text-xs">출력:</span>
-                          <code className="block text-blue-400 font-mono text-sm mt-1">
+                          <span className="text-gray-500 text-xs">출력:</span>
+                          <code className="block text-blue-700 font-mono text-sm mt-1 bg-blue-50 p-1 rounded">
                             {example.output}
                           </code>
                         </div>
                         <div>
-                          <span className="text-slate-400 text-xs">설명:</span>
-                          <p className="text-slate-300 text-sm mt-1">{example.explanation}</p>
+                          <span className="text-gray-500 text-xs">설명:</span>
+                          <p className="text-gray-700 text-sm mt-1">{example.explanation}</p>
                         </div>
                       </div>
                     ))}
                   </div>
 
-                  <Separator className="bg-slate-600" />
+                  <Separator className="bg-gray-200" />
 
                   <div>
-                    <h4 className="text-white font-semibold mb-2">제약 조건</h4>
+                    <h4 className="text-gray-900 font-semibold mb-2">제약 조건</h4>
                     <ul className="space-y-1">
                       {currentProblem.constraints.map((constraint, index) => (
-                        <li key={index} className="text-slate-300 text-sm flex items-start space-x-2">
-                          <div className="w-1 h-1 rounded-full bg-slate-500 mt-2 flex-shrink-0"></div>
+                        <li key={index} className="text-gray-700 text-sm flex items-start space-x-2">
+                          <div className="w-1 h-1 rounded-full bg-gray-400 mt-2 flex-shrink-0"></div>
                           <span>{constraint}</span>
                         </li>
                       ))}
@@ -226,11 +239,11 @@ const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
 
           <TabsContent value="testcases" className="m-0 h-full">
             <div className="p-4 space-y-4">
-              <Card className="bg-slate-700 border-slate-600">
+              <Card className="bg-white border border-gray-200 shadow-sm">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-white text-sm flex items-center justify-between">
+                  <CardTitle className="text-gray-900 text-sm flex items-center justify-between">
                     테스트 케이스
-                    <Button size="sm" variant="outline" className="border-slate-600">
+                    <Button size="sm" variant="outline" className="border-gray-300">
                       <Play className="h-3 w-3 mr-1" />
                       실행
                     </Button>
@@ -238,27 +251,27 @@ const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {[1, 2, 3].map((testCase) => (
-                    <div key={testCase} className="bg-slate-800 p-3 rounded-lg">
+                    <div key={testCase} className="bg-gray-50 p-3 rounded-lg border border-gray-200">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-slate-300 text-sm font-semibold">
+                        <span className="text-gray-700 text-sm font-semibold">
                           Test Case {testCase}
                         </span>
-                        <CheckCircle className="h-4 w-4 text-green-400" />
+                        <CheckCircle className="h-4 w-4 text-green-600" />
                       </div>
                       <div className="space-y-2 text-xs">
                         <div>
-                          <span className="text-slate-400">입력:</span>
-                          <code className="block text-green-400 font-mono mt-1">
+                          <span className="text-gray-500">입력:</span>
+                          <code className="block text-green-700 font-mono mt-1 bg-green-50 p-1 rounded">
                             nums = [2,7,11,15], target = 9
                           </code>
                         </div>
                         <div>
-                          <span className="text-slate-400">예상 출력:</span>
-                          <code className="block text-blue-400 font-mono mt-1">[0,1]</code>
+                          <span className="text-gray-500">예상 출력:</span>
+                          <code className="block text-blue-700 font-mono mt-1 bg-blue-50 p-1 rounded">[0,1]</code>
                         </div>
                         <div>
-                          <span className="text-slate-400">실제 출력:</span>
-                          <code className="block text-green-400 font-mono mt-1">[0,1]</code>
+                          <span className="text-gray-500">실제 출력:</span>
+                          <code className="block text-green-700 font-mono mt-1 bg-green-50 p-1 rounded">[0,1]</code>
                         </div>
                       </div>
                     </div>
@@ -275,6 +288,16 @@ const ProblemPanel = ({ isTeacher }: ProblemPanelProps) => {
         <ProblemCreator
           onClose={() => setShowProblemCreator(false)}
           onSave={handleSaveProblem}
+        />
+      )}
+
+      {/* Problem Selector Modal */}
+      {showProblemSelector && (
+        <ProblemSelector
+          isOpen={showProblemSelector}
+          onClose={() => setShowProblemSelector(false)}
+          onSelect={handleSelectProblem}
+          currentProblem={currentProblem}
         />
       )}
     </div>
