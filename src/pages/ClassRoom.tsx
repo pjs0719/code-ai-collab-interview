@@ -52,9 +52,7 @@ const ClassRoom = () => {
     { id: 1, name: "김민수", isOnline: true, progress: 75, timeComplexity: "O(n²)", spaceComplexity: "O(n)", testsCompleted: 3, totalTests: 4 },
     { id: 2, name: "이영희", isOnline: true, progress: 60, timeComplexity: "O(n)", spaceComplexity: "O(1)", testsCompleted: 2, totalTests: 4 },
     { id: 3, name: "박철수", isOnline: false, progress: 45, timeComplexity: "O(n²)", spaceComplexity: "O(n)", testsCompleted: 1, totalTests: 4 },
-    { id: 4, name: "정미라", isOnline: true, progress: 90, timeComplexity: "O(n)", spaceComplexity: "O(1)", testsCompleted: 4, totalTests: 4 },
-    { id: 5, name: "한지우", isOnline: true, progress: 55, timeComplexity: "O(n²)", spaceComplexity: "O(n)", testsCompleted: 2, totalTests: 4 },
-    { id: 6, name: "오성민", isOnline: true, progress: 80, timeComplexity: "O(n)", spaceComplexity: "O(1)", testsCompleted: 3, totalTests: 4 }
+    { id: 4, name: "정미라", isOnline: true, progress: 90, timeComplexity: "O(n)", spaceComplexity: "O(1)", testsCompleted: 4, totalTests: 4 }
   ]);
 
   const [currentCode, setCurrentCode] = useState(`// 문제: 배열에서 중복된 요소를 제거하는 함수를 작성하세요
