@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -32,6 +31,7 @@ import AIAnalysis from "@/components/AIAnalysis";
 import ProblemPanel from "@/components/ProblemPanel";
 import ClassSummaryReport from "@/components/ClassSummaryReport";
 import DrawingOverlay from "@/components/DrawingOverlay";
+import CompactStudentGrid from "@/components/CompactStudentGrid";
 
 const ClassRoom = () => {
   const { sessionId } = useParams();
@@ -276,7 +276,7 @@ function removeDuplicates(arr) {
           <div className="flex-1 relative">
             {isTeacher ? (
               viewMode === 'grid' ? (
-                <StudentGridView 
+                <CompactStudentGrid 
                   students={students}
                   onSelectStudent={selectStudent}
                 />
